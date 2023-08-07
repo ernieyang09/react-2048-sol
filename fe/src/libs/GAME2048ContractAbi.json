@@ -1,0 +1,168 @@
+[
+  {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "name": "fallbackcalled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "gamerAddr",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "gameTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "score",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "lastBoardState",
+            "type": "string"
+          },
+          {
+            "internalType": "uint8",
+            "name": "gameStatus",
+            "type": "uint8"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct GAME2048.Game",
+        "name": "record",
+        "type": "tuple"
+      }
+    ],
+    "name": "gameUpload",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [],
+    "name": "leaderBoardUpdate",
+    "type": "event"
+  },
+  {
+    "stateMutability": "payable",
+    "type": "fallback"
+  },
+  {
+    "inputs": [],
+    "name": "getLeaderBoard",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "gamerAddr",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "gameTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "score",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "lastBoardState",
+            "type": "string"
+          },
+          {
+            "internalType": "uint8",
+            "name": "gameStatus",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct GAME2048.Game[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "gamerAddr",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "gameTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "score",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "lastBoardState",
+            "type": "string"
+          },
+          {
+            "internalType": "uint8",
+            "name": "gameStatus",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct GAME2048.Game",
+        "name": "record",
+        "type": "tuple"
+      }
+    ],
+    "name": "uploadRecord",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
