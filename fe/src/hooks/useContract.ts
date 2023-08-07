@@ -3,9 +3,10 @@ import { ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core'
 import Abi from '@/libs/GAME2048ContractAbi.json'
 import Address from '@/libs/GAME2048ContractAddress.json'
+import { GAME2048 } from '@/types/contracts'
 
 const useContract = ({ needSigner = true }) => {
-  const { provider, ...x } = useWeb3React()
+  const { provider } = useWeb3React()
 
   const contract = useMemo(() => {
     if (!provider) {
@@ -16,7 +17,7 @@ const useContract = ({ needSigner = true }) => {
     return new ethers.Contract(Address, Abi, signerOrProvider)
   }, [provider, needSigner])
 
-  return contract
+  return contract as GAME2048
 }
 
 export default useContract

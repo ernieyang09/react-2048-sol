@@ -1,4 +1,4 @@
-import cls from 'classname'
+import cls from 'classnames'
 import { styled } from '@linaria/react'
 import { useEffect, useState } from 'react'
 import Button from '@/components/Button'
@@ -41,6 +41,10 @@ const UploadButton = () => {
     setLoading(true)
     try {
       const address = await provider?.getSigner().getAddress()
+
+      if (!address) {
+        return
+      }
 
       const tx = await contract.uploadRecord(
         {

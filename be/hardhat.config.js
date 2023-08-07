@@ -1,6 +1,10 @@
 require("@nomicfoundation/hardhat-toolbox");
 require('hardhat-deploy');
+require('@typechain/hardhat')
+require('@nomicfoundation/hardhat-ethers')
+require('@nomicfoundation/hardhat-chai-matchers')
 require("dotenv").config()
+
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -20,4 +24,11 @@ module.exports = {
     },
 		simpleERC20Beneficiary: 1,
 	},
+  typechain: {
+    outDir: 'types',
+    target: 'ethers-v5',
+    alwaysGenerateOverloads: false, // should overloads with full signatures like deposit(uint256) be generated always, even if there are no overloads?
+    externalArtifacts: ['externalArtifacts/*.json'], // optional array of glob patterns with external artifacts to process (for example external libs from node_modules)
+    dontOverrideCompile: false // defaults to false
+  },
 };

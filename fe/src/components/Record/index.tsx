@@ -104,7 +104,7 @@ const RecordBlock: React.FC<RecordBlockProps> = ({ rootRef, stop, resume }) => {
     if (!contract) {
       return
     }
-    const fetchLeaderBoard = async (...params) => {
+    const fetchLeaderBoard = async () => {
       try {
         const res = await contract.getLeaderBoard()
         const boardRecords = res.map(transformEventToObj)
