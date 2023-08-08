@@ -7,7 +7,7 @@ import { Modal } from 'react-responsive-modal'
 import 'react-responsive-modal/styles.css'
 import Board from '@/components/Board'
 import useContract from '@/hooks/useContract'
-import { useWeb3React } from '@web3-react/core'
+import { useWrapWeb3ReactContext } from '@/components/Web3ContextProvider'
 import { GAME2048 } from '@/types/contracts'
 import { Board as TBoard } from '@/types/Tile'
 
@@ -104,15 +104,8 @@ const Record = ({
   )
 }
 
-const RecordBlock: React.FC<RecordBlockProps> = ({ rootRef, stop, resume }) => {
-  const initRef = useRef(false)
+const LeaderBoardRecord = ({ contract, provider, setSelect }) => {
   const [leaderBoardRecords, setLeaderBoardRecords] = useState<IRecord[]>([])
-  const [histories, setHistories] = useState<IRecord[]>([])
-  const [select, setSelect] = useState<undefined | TBoard>(undefined)
-
-  const { provider, account } = useWeb3React()
-
-  const contract = useContract({ needSigner: false })
 
   useEffect(() => {
     if (!contract) {
@@ -135,7 +128,27 @@ const RecordBlock: React.FC<RecordBlockProps> = ({ rootRef, stop, resume }) => {
     })
   }, [provider, contract])
 
+  return (
+    <div>
+      {leaderBoardRecords.map((h) => (
+        <Record
+          key={h.gameTime}
+          {...h}
+          handleClick={() => {
+            setSelect(h.lastBoardState)
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
+const HistoryRecord = ({ account, contract, setSelect }) => {
+  const initRef = useRef(false)
+  const [histories, setHistories] = useState<IRecord[]>([])
+
   useEffect(() => {
+    let timeout
     if (!contract) {
       return
     }
@@ -162,19 +175,39 @@ const RecordBlock: React.FC<RecordBlockProps> = ({ rootRef, stop, resume }) => {
       if (eventAddr !== account) {
         return
       }
-      setHistories([transformEventToObj(record), ...histories])
+      setHistories((his) => [transformEventToObj(record), ...his])
     }
 
     contract.on('gameUpload', handleEvent)
 
-    setTimeout(() => {
+    timeout = setTimeout(() => {
       fetchGamerHistory()
-    }, 25)
+    }, 500)
 
     return () => {
       contract.off('gameUpload', handleEvent)
+      clearTimeout(timeout)
     }
-  }, [account, contract, histories, provider])
+  }, [account, contract])
+  return (
+    <div>
+      {histories.map((h) => (
+        <Record
+          key={h.gameTime}
+          {...h}
+          handleClick={() => {
+            setSelect(h.lastBoardState)
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
+const RecordBlock: React.FC<RecordBlockProps> = ({ rootRef, stop, resume }) => {
+  const [select, setSelect] = useState<undefined | TBoard>(undefined)
+  const { provider, account, isCorrectNetwork } = useWrapWeb3ReactContext()
+  const contract = useContract({ needSigner: false })
 
   useEffect(() => {
     if (select === undefined) {
@@ -186,22 +219,16 @@ const RecordBlock: React.FC<RecordBlockProps> = ({ rootRef, stop, resume }) => {
 
   return (
     <div>
-      <div>
+      <div style={{ marginBottom: '1rem' }}>
         <div style={{ marginBottom: '0.5rem' }}>
           <HeaderWrap>
             <div style={{ fontSize: '1.5em', fontWeight: 500 }}>LeaderBoard</div>
           </HeaderWrap>
         </div>
         <div>
-          {leaderBoardRecords.map((h) => (
-            <Record
-              key={h.gameTime}
-              {...h}
-              handleClick={() => {
-                setSelect(h.lastBoardState)
-              }}
-            />
-          ))}
+          {isCorrectNetwork && (
+            <LeaderBoardRecord contract={contract} provider={provider} setSelect={setSelect} />
+          )}
         </div>
       </div>
       <div style={{ marginBottom: '0.5rem' }}>
@@ -210,15 +237,9 @@ const RecordBlock: React.FC<RecordBlockProps> = ({ rootRef, stop, resume }) => {
         </HeaderWrap>
       </div>
       <div>
-        {histories.map((h) => (
-          <Record
-            key={h.gameTime}
-            {...h}
-            handleClick={() => {
-              setSelect(h.lastBoardState)
-            }}
-          />
-        ))}
+        {isCorrectNetwork && (
+          <HistoryRecord account={account} contract={contract} setSelect={setSelect} />
+        )}
       </div>
       <Modal
         open={select !== undefined}
