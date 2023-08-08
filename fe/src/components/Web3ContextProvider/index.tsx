@@ -1,4 +1,4 @@
-import { Web3ReactProvider, useWeb3React } from '@web3-react/core'
+import { Web3ReactProvider, useWeb3React, Web3ContextType } from '@web3-react/core'
 import { PRIORITIZED_CONNECTORS } from './connections'
 
 import { PropsWithChildren, createContext, useContext, useMemo } from 'react'
@@ -7,10 +7,11 @@ interface IWrapContext {
   isCorrectNetwork: boolean
 }
 
-const WrapContext = createContext({} as ReturnType<typeof useWeb3React> & IWrapContext)
+const WrapContext = createContext({} as Web3ContextType & IWrapContext)
 
 const Provider: React.FC<PropsWithChildren> = ({ children }) => {
   const original = useWeb3React()
+  original.provider?.getSigner
 
   const isCorrectNetwork = original.isActive && original.chainId === 31337
 
@@ -27,7 +28,7 @@ const Provider: React.FC<PropsWithChildren> = ({ children }) => {
 
 export const useWrapWeb3ReactContext = () => useContext(WrapContext)
 
-const Web3Provider = ({ children }) => {
+const Web3Provider: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <Web3ReactProvider
       connectors={Object.values(PRIORITIZED_CONNECTORS).map((connector) => [
