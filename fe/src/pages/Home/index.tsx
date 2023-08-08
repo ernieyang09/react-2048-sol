@@ -7,7 +7,7 @@ import GameResult from '@/components/GameResult'
 import RecordBlock from '@/components/Record'
 import Button from '@/components/Button'
 import { MediaMobile } from '@/style'
-import { useWeb3React } from '@web3-react/core'
+import { useWrapWeb3ReactContext } from '@/components/Web3ContextProvider'
 import GameContextProvider from './context'
 
 const Wrapper = styled.div`
@@ -34,16 +34,18 @@ const Score = styled.div`
 `
 
 const Home = () => {
-  const { tiles, start, score, gameStatus, stop, resume } = useGame()
-  const { isActive } = useWeb3React()
+  const { tiles, start, score, gameStatus, stop, resume, destory } = useGame()
+  const { isCorrectNetwork } = useWrapWeb3ReactContext()
   const rootRef = useRef<HTMLDivElement>(null)
   rootRef.current
 
   useEffect(() => {
-    if (isActive) {
+    if (isCorrectNetwork) {
       start()
+    } else {
+      destory()
     }
-  }, [start, isActive])
+  }, [start, destory, isCorrectNetwork])
 
   return (
     <GameContextProvider gameStatus={gameStatus} score={score} tiles={tiles}>
@@ -77,7 +79,7 @@ const Home = () => {
           <Score>
             score: <span className="number">{score}</span>
           </Score>
-          {isActive && <Button onClick={start}>New Game</Button>}
+          {isCorrectNetwork && <Button onClick={start}>New Game</Button>}
         </div>
         <div style={{ marginBottom: '2rem' }}>
           <Board>

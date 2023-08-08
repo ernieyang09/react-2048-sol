@@ -14,8 +14,8 @@ type CheckFreeSlotFn = (
 ) => number[]
 
 const useGame = () => {
-  const recorded = useRef(false)
   const [state, dispatch] = useReducer(reducer, initState)
+  const inGameRef = useRef(false)
   const [suspend, setSuspend] = useState(false)
   const { tiles, stateChanging } = state
   const [score, setScore] = useState(0)
@@ -191,7 +191,7 @@ const useGame = () => {
     dispatch({ type: 'EMPTY_BOARD' })
     dispatch({ type: 'CREATE_TILE' })
     dispatch({ type: 'CREATE_TILE' })
-    recorded.current = false
+    inGameRef.current = true
   }, [])
 
   const stop = useCallback(() => {
@@ -202,11 +202,20 @@ const useGame = () => {
     setSuspend(false)
   }, [])
 
+  const destory = useCallback(() => {
+    dispatch({ type: 'EMPTY_BOARD' })
+    inGameRef.current = false
+  }, [])
+
   useEffect(() => {
     if ([GameStatus.SUCCESS, GameStatus.FAIL].includes(gameStatus) || suspend) {
       return
     }
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (!inGameRef.current) {
+        console.log(1)
+        return
+      }
       // disables page scrolling with keyboard arrows
       e.preventDefault()
 
@@ -240,6 +249,7 @@ const useGame = () => {
     start,
     stop,
     resume,
+    destory,
     tiles,
     score,
     gameStatus,
