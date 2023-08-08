@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react'
 import Button from '@/components/Button'
 import { GameStatus } from '@/constants'
 import { useGameContext } from '@/pages/Home/context'
-import { useWeb3React } from '@web3-react/core'
+import { useWrapWeb3ReactContext } from '@/components/Web3ContextProvider'
 import useContract from '@/hooks/useContract'
-import { ethers } from 'ethers'
+import { ethers, BigNumber } from 'ethers'
 
 const SGameState = styled.div<{ show: boolean }>`
   position: absolute;
@@ -33,7 +33,7 @@ const SGameState = styled.div<{ show: boolean }>`
 const UploadButton = () => {
   const [loading, setLoading] = useState(false)
   const [uploaded, setUploaded] = useState(false)
-  const { provider } = useWeb3React()
+  const { provider } = useWrapWeb3ReactContext()
   const contract = useContract({ needSigner: true })
   const { gameStatus, tiles, score } = useGameContext()
 
@@ -46,6 +46,16 @@ const UploadButton = () => {
         return
       }
 
+      const payload = {
+        gamerAddr: address,
+        gameTime: BigNumber.from(new Date().getTime()),
+        score: BigNumber.from(score),
+        lastBoardState: JSON.stringify(tiles),
+        gameStatus,
+      }
+
+      const estimatedGas = await contract.estimateGas.uploadRecord(payload)
+
       const tx = await contract.uploadRecord(
         {
           gamerAddr: address,
@@ -55,7 +65,7 @@ const UploadButton = () => {
           gameStatus,
         },
         {
-          gasLimit: 5000000,
+          gasLimit: estimatedGas.mul(BigNumber.from(15000)).div(BigNumber.from(10000)), // * 1.5
         },
       )
       await tx.wait()
