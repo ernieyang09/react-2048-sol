@@ -1,21 +1,22 @@
 import dayjs from 'dayjs'
-import { ethers } from 'ethers'
 import { styled } from '@linaria/react'
 import { css } from '@linaria/core'
 import { useEffect, useRef, useState } from 'react'
 import { GameStatus } from '@/constants'
 import { Modal } from 'react-responsive-modal'
 import 'react-responsive-modal/styles.css'
-import Board, { TileProps } from '@/components/Board'
+import Board from '@/components/Board'
 import useContract from '@/hooks/useContract'
 import { useWeb3React } from '@web3-react/core'
+import { GAME2048 } from '@/types/contracts'
+import { Board as TBoard } from '@/types/Tile'
 
 const SModal = css`
   top: 15%;
   max-width: 580px;
 `
 
-const statusDisplay = {
+const statusDisplay: { [key in GameStatus.SUCCESS | GameStatus.FAIL]: string } = {
   [GameStatus.SUCCESS]: 'Success',
   [GameStatus.FAIL]: 'Fail',
 }
@@ -60,14 +61,21 @@ interface RecordBlockProps {
   resume: () => void
 }
 
+interface IRecord {
+  gamerAddr: string
+  gameTime: number
+  score: number
+  lastBoardState: TBoard
+  gameStatus: GameStatus
+}
+
 const transformEventToObj = ({
   gameStatus,
   gameTime,
   gamerAddr,
   score,
   lastBoardState,
-  handleClick,
-}) => ({
+}: GAME2048.GameStructOutput): IRecord => ({
   gameStatus,
   gameTime: gameTime.toNumber(),
   gamerAddr,
@@ -75,7 +83,13 @@ const transformEventToObj = ({
   score: score.toNumber(),
 })
 
-const Record = ({ gamerAddr, gameTime, score, gameStatus, handleClick }) => {
+const Record = ({
+  gamerAddr,
+  gameTime,
+  score,
+  gameStatus,
+  handleClick,
+}: IRecord & { handleClick: () => void }) => {
   return (
     <SRecord onClick={handleClick}>
       <div className="first-line">
@@ -84,7 +98,7 @@ const Record = ({ gamerAddr, gameTime, score, gameStatus, handleClick }) => {
       </div>
       <div className="record">
         <div>{`Score: ${score}`}</div>
-        <div>{`Status: ${statusDisplay[gameStatus]}`}</div>
+        <div>{`Status: ${statusDisplay[gameStatus as GameStatus.SUCCESS | GameStatus.FAIL]}`}</div>
       </div>
     </SRecord>
   )
@@ -92,9 +106,9 @@ const Record = ({ gamerAddr, gameTime, score, gameStatus, handleClick }) => {
 
 const RecordBlock: React.FC<RecordBlockProps> = ({ rootRef, stop, resume }) => {
   const initRef = useRef(false)
-  const [leaderBoardRecords, setLeaderBoardRecords] = useState([])
-  const [histories, setHistories] = useState([])
-  const [select, setSelect] = useState<undefined | TileProps>(undefined)
+  const [leaderBoardRecords, setLeaderBoardRecords] = useState<IRecord[]>([])
+  const [histories, setHistories] = useState<IRecord[]>([])
+  const [select, setSelect] = useState<undefined | TBoard>(undefined)
 
   const { provider, account } = useWeb3React()
 
@@ -141,7 +155,7 @@ const RecordBlock: React.FC<RecordBlockProps> = ({ rootRef, stop, resume }) => {
       initRef.current = true
     }
 
-    const handleEvent = (eventAddr, record) => {
+    const handleEvent = (eventAddr: string, record: GAME2048.GameStructOutput) => {
       if (!initRef.current) {
         return
       }

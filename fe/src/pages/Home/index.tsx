@@ -8,7 +8,6 @@ import RecordBlock from '@/components/Record'
 import Button from '@/components/Button'
 import { MediaMobile } from '@/style'
 import { useWeb3React } from '@web3-react/core'
-import useContract from '@/hooks/useContract'
 import GameContextProvider from './context'
 
 const Wrapper = styled.div`

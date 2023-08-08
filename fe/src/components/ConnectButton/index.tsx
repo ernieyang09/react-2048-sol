@@ -1,6 +1,12 @@
 import { styled } from '@linaria/react'
-import { useWeb3React } from '@web3-react/core'
 import MetaMaskIcon from '@/assets/metamask.svg'
+import {
+  ConnectionType,
+  getConnection,
+  tryDeactivateConnector,
+} from '../Web3ContextProvider/connections'
+
+import { useWrapWeb3ReactContext } from '../Web3ContextProvider'
 
 const SConnectButton = styled.div`
   padding: 6px 12px;
@@ -18,32 +24,36 @@ const SConnectButton = styled.div`
   }
 `
 
-const ConnectButton = () => {
-  const { isActive, connector, account } = useWeb3React()
+const connector = getConnection(ConnectionType.INJECTED).connector
 
-  // useEffect(() => {
-  //   const deactivate = async () => {
-  //     console.log(1, connector)
-  //     await connector.deactivate()
-  //   }
-  //   if (chainId !== 31337) {
-  //     deactivate()
-  //   }
-  // }, [chainId, connector])
+const ConnectButton = () => {
+  const { isActive, account, isCorrectNetwork } = useWrapWeb3ReactContext()
 
   const handleConnect = async () => {
-    try {
-      // await connector.activate(11155111)
-      await connector.activate(31337)
-    } catch (e) {
-      console.log(e)
-    }
+    await connector.activate(31337)
   }
+
+  const handleDisconnect = async () => {
+    await tryDeactivateConnector(connector)
+  }
+
+  const handleSwitchNetwork = async () => {
+    await connector.activate(31337)
+  }
+
   return (
-    <SConnectButton onClick={handleConnect}>
+    <SConnectButton
+      onClick={
+        !isActive ? handleConnect : isCorrectNetwork ? handleDisconnect : handleSwitchNetwork
+      }>
       <div className="wrapper">
         <img className="icon" src={MetaMaskIcon} />
-        {isActive ? `${account?.slice(0, 4)}...${account?.slice(-4)}` : 'Connect'}
+        {!isActive && 'Connect'}
+        {isActive
+          ? isCorrectNetwork
+            ? `${account?.slice(0, 4)}...${account?.slice(-4)}`
+            : 'Switch Network'
+          : null}
       </div>
     </SConnectButton>
   )

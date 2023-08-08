@@ -1,8 +1,21 @@
-import React, { createContext, useContext, useMemo } from 'react'
+import { createContext, useContext, useMemo, PropsWithChildren } from 'react'
+import { GameStatus } from '@/constants'
+import { Board } from '@/types/Tile'
 
-const GameContext = React.createContext({})
+interface IGameContext {
+  gameStatus: GameStatus
+  score: number
+  tiles: Board
+}
 
-const GameContextProvider = ({ gameStatus, score, tiles, children }) => {
+const GameContext = createContext({} as IGameContext)
+
+const GameContextProvider: React.FC<PropsWithChildren & IGameContext> = ({
+  gameStatus,
+  score,
+  tiles,
+  children,
+}) => {
   const value = useMemo(
     () => ({
       gameStatus,

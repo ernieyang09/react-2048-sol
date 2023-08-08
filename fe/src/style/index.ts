@@ -1,4 +1,3 @@
-
 const desktop = {
   grid: 113,
   gridGap: 15,
@@ -11,7 +10,7 @@ const mobile = {
 
 export const MediaMobile = `
   @media screen and (max-width: 600px) {
-`;
+`
 
 export const style = {
   desktop,

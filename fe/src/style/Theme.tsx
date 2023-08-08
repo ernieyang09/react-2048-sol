@@ -12,4 +12,4 @@ export default styled.div`
     --grid-size: ${() => `${style.mobile.grid}px`};
     --grid-gap: ${() => `${style.mobile.gridGap}px`};
   }
-`;
+`
