@@ -191,6 +191,7 @@ const useGame = () => {
     dispatch({ type: 'EMPTY_BOARD' })
     dispatch({ type: 'CREATE_TILE' })
     dispatch({ type: 'CREATE_TILE' })
+    setScore(0)
     inGameRef.current = true
   }, [])
 
@@ -204,6 +205,7 @@ const useGame = () => {
 
   const destory = useCallback(() => {
     dispatch({ type: 'EMPTY_BOARD' })
+    setScore(0)
     inGameRef.current = false
   }, [])
 
