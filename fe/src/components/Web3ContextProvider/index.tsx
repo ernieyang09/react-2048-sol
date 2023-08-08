@@ -3,6 +3,8 @@ import { PRIORITIZED_CONNECTORS } from './connections'
 
 import { PropsWithChildren, createContext, useContext, useMemo } from 'react'
 
+import { CHAIN_ID } from '@/constants/config'
+
 interface IWrapContext {
   isCorrectNetwork: boolean
 }
@@ -13,7 +15,7 @@ const Provider: React.FC<PropsWithChildren> = ({ children }) => {
   const original = useWeb3React()
   original.provider?.getSigner
 
-  const isCorrectNetwork = original.isActive && original.chainId === 31337
+  const isCorrectNetwork = original.isActive && original.chainId === CHAIN_ID
 
   const value = useMemo(
     () => ({

@@ -5,4 +5,4 @@ export enum GameStatus {
   FAIL,
 }
 
-export const LOCAL_STORAGE_KEY = '2048RECORD'
+// export const LOCAL_STORAGE_KEY = '2048RECORD'

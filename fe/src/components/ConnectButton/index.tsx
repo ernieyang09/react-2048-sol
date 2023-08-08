@@ -8,6 +8,8 @@ import {
 
 import { useWrapWeb3ReactContext } from '../Web3ContextProvider'
 
+import { CHAIN_ID } from '@/constants/config'
+
 const SConnectButton = styled.div`
   padding: 6px 12px;
   border: 2px solid #1b9aaa;
@@ -30,7 +32,7 @@ const ConnectButton = () => {
   const { isActive, account, isCorrectNetwork } = useWrapWeb3ReactContext()
 
   const handleConnect = async () => {
-    await connector.activate(31337)
+    await connector.activate(CHAIN_ID)
   }
 
   const handleDisconnect = async () => {
@@ -38,7 +40,7 @@ const ConnectButton = () => {
   }
 
   const handleSwitchNetwork = async () => {
-    await connector.activate(31337)
+    await connector.activate(CHAIN_ID)
   }
 
   return (
