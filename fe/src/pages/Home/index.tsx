@@ -10,9 +10,8 @@ import { MediaMobile } from '@/style'
 import { useWrapWeb3ReactContext } from '@/components/Web3ContextProvider'
 import GameContextProvider from './context'
 
-const Wrapper = styled.div`
+const Grid = styled.div`
   width: 527px;
-  margin: 0 auto;
 
   ${MediaMobile} {
     width: 320px;
@@ -33,6 +32,20 @@ const Score = styled.div`
   }
 `
 
+const Container = styled.div`
+  margin: 0 auto;
+  max-width: 1240px;
+  padding: 0 20px;
+  margin-bottom: 4em;
+`
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 4em;
+  justify-content: center;
+`
+
 const Home = () => {
   const { tiles, start, score, gameStatus, stop, resume, destory } = useGame()
   const { isCorrectNetwork } = useWrapWeb3ReactContext()
@@ -49,7 +62,7 @@ const Home = () => {
 
   return (
     <GameContextProvider gameStatus={gameStatus} score={score} tiles={tiles}>
-      <Wrapper ref={rootRef}>
+      <Container>
         <div style={{ display: 'flex', justifyContent: 'end', marginTop: '2rem' }}>
           <ConnectButton />
         </div>
@@ -67,36 +80,41 @@ const Home = () => {
             <span style={{ color: '#06D6A0' }}>8</span>
           </div>
         </div>
-
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            marginBottom: '16px',
-            height: '3rem',
-            alignItems: 'center',
-          }}>
-          <Score>
-            score: <span className="number">{score}</span>
-          </Score>
-          {isCorrectNetwork && <Button onClick={start}>New Game</Button>}
-        </div>
-        <div style={{ marginBottom: '2rem' }}>
-          <Board>
-            {Object.entries(tiles).map(([key, tile]) => (
-              <Board.Tile
-                key={key}
-                number={tile.value}
-                X={tile.x}
-                Y={tile.y}
-                update={tile.update}
-              />
-            ))}
-            <GameResult start={start} />
-          </Board>
-        </div>
-        <RecordBlock rootRef={rootRef} stop={stop} resume={resume} />
-      </Wrapper>
+        <Wrapper>
+          <Grid ref={rootRef}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginBottom: '16px',
+                height: '3rem',
+                alignItems: 'center',
+              }}>
+              <Score>
+                score: <span className="number">{score}</span>
+              </Score>
+              {isCorrectNetwork && <Button onClick={start}>New Game</Button>}
+            </div>
+            <div style={{ marginBottom: '2rem' }}>
+              <Board>
+                {Object.entries(tiles).map(([key, tile]) => (
+                  <Board.Tile
+                    key={key}
+                    number={tile.value}
+                    X={tile.x}
+                    Y={tile.y}
+                    update={tile.update}
+                  />
+                ))}
+                <GameResult start={start} />
+              </Board>
+            </div>
+          </Grid>
+          <Grid>
+            <RecordBlock rootRef={rootRef} stop={stop} resume={resume} />
+          </Grid>
+        </Wrapper>
+      </Container>
     </GameContextProvider>
   )
 }
