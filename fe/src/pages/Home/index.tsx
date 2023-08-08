@@ -46,6 +46,12 @@ const Wrapper = styled.div`
   justify-content: center;
 `
 
+const Faucet = styled.a`
+  color: #ef476f;
+  text-decoration: none;
+  display: inline-block;
+`
+
 const Home = () => {
   const { tiles, start, score, gameStatus, stop, resume, destory } = useGame()
   const { isCorrectNetwork } = useWrapWeb3ReactContext()
@@ -64,7 +70,14 @@ const Home = () => {
     <GameContextProvider gameStatus={gameStatus} score={score} tiles={tiles}>
       <Container>
         <div style={{ display: 'flex', justifyContent: 'end', marginTop: '2rem' }}>
-          <ConnectButton />
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ marginRight: '2rem' }}>
+              <Faucet href="https://sepoliafaucet.com/" target="_blank">
+                Faucet Link
+              </Faucet>
+            </div>
+            <ConnectButton />
+          </div>
         </div>
         <div
           style={{
