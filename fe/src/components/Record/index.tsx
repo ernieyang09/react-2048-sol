@@ -1,7 +1,9 @@
 import dayjs from 'dayjs'
+import { Dispatch, SetStateAction } from 'react'
 import { styled } from '@linaria/react'
 import { css } from '@linaria/core'
 import { useEffect, useRef, useState } from 'react'
+import { Web3Provider } from '@ethersproject/providers'
 import { GameStatus } from '@/constants'
 import { Modal } from 'react-responsive-modal'
 import 'react-responsive-modal/styles.css'
@@ -104,7 +106,13 @@ const Record = ({
   )
 }
 
-const LeaderBoardRecord = ({ contract, provider, setSelect }) => {
+interface ILeaderBoardRecord {
+  contract: GAME2048
+  provider: Web3Provider
+  setSelect: Dispatch<SetStateAction<TBoard | undefined>>
+}
+
+const LeaderBoardRecord: React.FC<ILeaderBoardRecord> = ({ contract, provider, setSelect }) => {
   const [leaderBoardRecords, setLeaderBoardRecords] = useState<IRecord[]>([])
 
   useEffect(() => {
@@ -143,12 +151,18 @@ const LeaderBoardRecord = ({ contract, provider, setSelect }) => {
   )
 }
 
-const HistoryRecord = ({ account, contract, setSelect }) => {
+interface IHistoryRecord {
+  account: string
+  contract: GAME2048
+  setSelect: Dispatch<SetStateAction<TBoard | undefined>>
+}
+
+const HistoryRecord: React.FC<IHistoryRecord> = ({ account, contract, setSelect }) => {
   const initRef = useRef(false)
   const [histories, setHistories] = useState<IRecord[]>([])
 
   useEffect(() => {
-    let timeout
+    let timeout: ReturnType<typeof setTimeout>
     if (!contract) {
       return
     }
@@ -180,6 +194,7 @@ const HistoryRecord = ({ account, contract, setSelect }) => {
 
     contract.on('gameUpload', handleEvent)
 
+    // eslint-disable-next-line prefer-const
     timeout = setTimeout(() => {
       fetchGamerHistory()
     }, 500)
@@ -227,7 +242,7 @@ const RecordBlock: React.FC<RecordBlockProps> = ({ rootRef, stop, resume }) => {
         </div>
         <div>
           {isCorrectNetwork && (
-            <LeaderBoardRecord contract={contract} provider={provider} setSelect={setSelect} />
+            <LeaderBoardRecord contract={contract} provider={provider!} setSelect={setSelect} />
           )}
         </div>
       </div>
@@ -238,7 +253,7 @@ const RecordBlock: React.FC<RecordBlockProps> = ({ rootRef, stop, resume }) => {
       </div>
       <div>
         {isCorrectNetwork && (
-          <HistoryRecord account={account} contract={contract} setSelect={setSelect} />
+          <HistoryRecord account={account!} contract={contract} setSelect={setSelect} />
         )}
       </div>
       <Modal
