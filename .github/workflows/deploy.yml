@@ -34,10 +34,12 @@ jobs:
         run: |
           pnpm install --frozen-lockfile
           pnpm hardhat compile --force
-          pnpm hardhat deploy --no-compile
+          pnpm hardhat deploy --no-compile --network sepolia
       # split step using artifact if need
       - name: Build(FE)
         working-directory: ./fe
+        env:
+          CHAIN_ID: ${{ vars.CHAIN_ID }}
         run: |
           pnpm install --frozen-lockfile
           pnpm build
