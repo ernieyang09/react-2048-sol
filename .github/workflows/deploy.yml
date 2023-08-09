@@ -41,6 +41,28 @@ jobs:
         run: |
           pnpm install --frozen-lockfile
           pnpm build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          name: production-files
+          path: ./fe/dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: production-files
+          path: ./fe/dist
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
+        with:
+          artifact_name: production-files
 
 
 
