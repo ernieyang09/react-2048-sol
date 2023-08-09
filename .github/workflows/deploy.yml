@@ -29,7 +29,7 @@ jobs:
         working-directory: ./be
         env:
           UPDATE_FRONTEND_CONTRACT: 1
-          ALGOLIA_APP_ID: ${{ secrets.INFURA_API_KEY }}
+          INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
           SEPOLIA_PRIVATE_KEY: ${{ secrets.SEPOLIA_PRIVATE_KEY }}
         run: |
           pnpm install --frozen-lockfile
