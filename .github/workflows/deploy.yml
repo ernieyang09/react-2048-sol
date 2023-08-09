@@ -1,0 +1,46 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.6.6
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: 'pnpm'
+          cache-dependency-path: '**/pnpm-lock.yaml'
+      - name: compile & deploy(BE)
+        working-directory: ./be
+        env:
+          UPDATE_FRONTEND_CONTRACT: 1
+          ALGOLIA_APP_ID: ${{ secrets.INFURA_API_KEY }}
+          SEPOLIA_PRIVATE_KEY: ${{ secrets.SEPOLIA_PRIVATE_KEY }}
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm hardhat compile --force
+          pnpm hardhat deploy --no-compile
+      # split step using artifact if need
+      - name: Build(FE)
+        working-directory: ./fe
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+
+
+
