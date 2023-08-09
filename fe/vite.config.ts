@@ -3,6 +3,8 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import linaria from '@linaria/vite'
 
+const PROJECT_NAME = 'react-2048-sol'
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -14,6 +16,7 @@ export default defineConfig({
       },
     }),
   ],
+  base: `/${PROJECT_NAME}`,
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
