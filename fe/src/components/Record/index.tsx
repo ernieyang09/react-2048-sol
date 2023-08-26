@@ -168,9 +168,9 @@ const HistoryRecord: React.FC<IHistoryRecord> = ({ account, contract, setSelect 
     }
 
     const fetchGamerHistory = async () => {
-      const filter = contract.filters.gameUpload()
+      const filter = contract.filters.gameUpload(account)
 
-      const events = await contract.queryFilter(filter, 0, account)
+      const events = await contract.queryFilter(filter)
       const records = events
         .map((e) => {
           const r = contract.interface.decodeEventLog('gameUpload', e.data)
